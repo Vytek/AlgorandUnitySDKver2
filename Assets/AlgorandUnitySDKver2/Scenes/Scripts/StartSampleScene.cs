@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,5 +8,6 @@ public class StartSampleScene : MonoBehaviour
     void Start()
     {
         Debug.Log("Started.");
+        Debug.Log("Version: " + AlgorandManager.Instance.Version());
     }
 }
