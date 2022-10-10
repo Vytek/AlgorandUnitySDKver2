@@ -16,6 +16,7 @@
 - https://github.com/FrankSzendzielarz/dotnet-algorand-sdk
 - https://github.com/GlitchEnzo/NuGetForUnity (MIT) 
 - https://github.com/UnityCommunity/UnitySingleton (MIT)
+- https://github.com/Cysharp/UniTask (MIT)
 - https://github.com/david-frederick-batt/AlgorandUnityTransactionDemo
 
 In the project we use [Purestake](https://www.purestake.com/networks/algorand/) Algorand Public Node in TESTNET. It is more convenient for a possible final application in Unity to use a remote system such as Purestake by creating the various Algorand transactions locally via the .NET SDK.
