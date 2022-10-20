@@ -53,10 +53,29 @@ public class AlgorandManager : Singleton<AlgorandManager>
     [SerializeField]
     public string ALGOD_URL_ENDPOINT_INDEXER = string.Empty;
 
+    DefaultApi algodApiInstance;
+
     // OnEnable is called before Start
     protected virtual void OnEnable()
     {
         Debug.Log("Starting Algorand Manager...");
+    }
+
+    protected virtual async void Start()
+    {
+        var httpClient = HttpClientConfigurator.ConfigureHttpClient(ALGOD_URL_ENDPOINT, ALGOD_TOKEN);
+        algodApiInstance = new DefaultApi(httpClient);
+
+        try
+        {
+            var supply = await algodApiInstance.GetSupplyAsync();
+            Debug.Log("Total Algorand Supply: " + supply.TotalMoney);
+            Debug.Log("Online Algorand Supply: " + supply.OnlineMoney);
+        }
+        catch (ApiException<ErrorResponse> e)
+        {
+            Debug.Log("Exception when calling algod#getSupply: " + e.Result.Message);
+        }
     }
 
     /// <summary>
