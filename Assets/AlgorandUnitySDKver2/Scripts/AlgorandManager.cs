@@ -34,6 +34,7 @@ using Algorand.Algod;
 using Algorand.Algod.Model;
 using Algorand.Algod.Model.Transactions;
 using Algorand.Utils;
+using Cysharp.Threading.Tasks;
 
 public class AlgorandManager : Singleton<AlgorandManager>
 {
@@ -69,21 +70,9 @@ public class AlgorandManager : Singleton<AlgorandManager>
 #endif
     }
 
-    protected virtual async void Start()
+    protected virtual void Start()
     {
-        var httpClient = HttpClientConfigurator.ConfigureHttpClient(ALGOD_URL_ENDPOINT, ALGOD_TOKEN);
-        algodApiInstance = new DefaultApi(httpClient);
-
-        try
-        {
-            var supply = await algodApiInstance.GetSupplyAsync();
-            Debug.Log("Total Algorand Supply: " + supply.TotalMoney);
-            Debug.Log("Online Algorand Supply: " + supply.OnlineMoney);
-        }
-        catch (ApiException<ErrorResponse> e)
-        {
-            Debug.Log("Exception when calling algod#getSupply: " + e.Result.Message);
-        }
+        this.ConnectToNode(this.ALGOD_URL_ENDPOINT, this.ALGOD_TOKEN).Forget();
     }
 
     /// <summary>
@@ -299,6 +288,34 @@ public class AlgorandManager : Singleton<AlgorandManager>
         else
         {
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Connect to ALGOD / Purestack Node
+    /// </summary>
+    public async UniTaskVoid ConnectToNode(string AlgodURLEndpoint, string AlgodToken)
+    {
+        if (string.IsNullOrEmpty(AlgodURLEndpoint) || string.IsNullOrEmpty(AlgodToken))
+        {
+            Debug.LogError("AlgodURLEndpoint or AlgodToken are null or empty!");
+            throw new ArgumentException("AlgodURLEndpoint or AlgodToken are null or empty!");
+        }
+        else
+        {
+            var httpClient = HttpClientConfigurator.ConfigureHttpClient(ALGOD_URL_ENDPOINT, ALGOD_TOKEN);
+            algodApiInstance = new DefaultApi(httpClient);
+
+            try
+            {
+                var supply = await algodApiInstance.GetSupplyAsync();
+                Debug.Log("Total Algorand Supply: " + supply.TotalMoney);
+                Debug.Log("Online Algorand Supply: " + supply.OnlineMoney);
+            }
+            catch (ApiException<ErrorResponse> e)
+            {
+                Debug.Log("Exception when calling algod#getSupply: " + e.Result.Message);
+            }
         }
     }
 }
