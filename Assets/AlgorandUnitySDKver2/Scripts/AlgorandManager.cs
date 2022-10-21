@@ -59,6 +59,12 @@ public class AlgorandManager : Singleton<AlgorandManager>
     protected virtual void OnEnable()
     {
         Debug.Log("Starting Algorand Manager...");
+        this.ALGOD_URL_ENDPOINT = PlayerPrefs.GetString("AlgorandAccountSDKURL", "https://testnet-algorand.api.purestake.io/ps2");
+        this.ALGOD_TOKEN = PlayerPrefs.GetString("AlgorandSDKToken", "IkwGyG4qWg8W6VegMFfCa3iIIj06wi0x6Vn7FO5j");
+        this.ALGOD_URL_ENDPOINT_INDEXER = PlayerPrefs.GetString("AlgorandAccountSDKURLIndexer", "https://testnet-algorand.api.purestake.io/idx2");
+#if !(DEVELOPMENT_BUILD || UNITY_EDITOR)
+        	Debug.unityLogger.filterLogType = LogType.Exception;
+#endif
     }
 
     protected virtual async void Start()
