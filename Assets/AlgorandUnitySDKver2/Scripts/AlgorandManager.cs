@@ -163,4 +163,142 @@ public class AlgorandManager : Singleton<AlgorandManager>
             return _AMAccount.Address.ToString();
         }
     }
+
+    /// <summary>
+    /// Load Account from PlayPrefs and use in Algorand Manager instance
+    /// </summary>
+    /// <returns>Algorand Account Address saved in PlayPrefs</returns>
+    public string LoadAccountFromPlayerPrefs()
+    {
+        //Load encrypted Mnemonic Algorand Account from PlayPrefs
+        if (PlayerPrefs.HasKey("AlgorandAccountSDK"))
+        {
+            if (_AMAccount == null)
+            {
+                //Debug
+                //Debug.Log("Start debug decrypt...");
+                //string TestDecrypt = RijndaelEncryption.Decrypt(PlayerPrefs.GetString("AlgorandAccountSDK"), SystemInfo.deviceUniqueIdentifier + _InternalPassword);
+                //Debug.LogWarning(TestDecrypt);
+                _AMAccount = new Account(RijndaelEncryption.Decrypt(PlayerPrefs.GetString("AlgorandAccountSDK"), SystemInfo.deviceUniqueIdentifier + _InternalPassword));
+                return _AMAccount.Address.ToString();
+            }
+            else
+            {
+                Debug.LogError("There is already an account loaded!");
+                throw new InvalidOperationException("There is already an account loaded!");
+            }
+        }
+        else
+        {
+            Debug.LogError("PlayPrefs does not contain a saved Algorand Account");
+            throw new InvalidOperationException("PlayPrefs does not contain a saved Algorand Account");
+        }
+    }
+
+    /// <summary>
+    /// Delete actual Algorand Account from PlayerPrefs
+    /// WARNING: this method will irrevocably delete your account from PlayerPrefs!
+    /// </summary>
+    /// <returns>Boolean true if procedure went ok</returns>
+    public bool DeleteAccountFromPlayerPrefs()
+    {
+        if (PlayerPrefs.HasKey("AlgorandAccountSDK"))
+        {
+            PlayerPrefs.DeleteKey("AlgorandAccountSDK");
+            //Delete always hash too (If the key does not exist, DeleteKey has no impact.)
+            PlayerPrefs.DeleteKey("AlgorandAccountSDKHash");
+            return true;
+        }
+        else
+        {
+            Debug.LogError("PlayPrefs does not contain a saved Algorand Account");
+            throw new InvalidOperationException("PlayPrefs does not contain a saved Algorand Account");
+        }
+    }
+
+    /// <summary>
+    /// Get Actual Account Address initialized in AlgorandManager
+    /// </summary>
+    /// <returns>Algorand Account Address</returns>
+	public string GetAddressAccount()
+    {
+
+        if (_AMAccount != null)
+        {
+            return _AMAccount.Address.ToString();
+        }
+        else
+        {
+            Debug.LogError("Account not generated yet!");
+            throw new InvalidOperationException("Account not generated yet!");
+        }
+    }
+
+    /// <summary>
+    /// Return Private Key of Algorand Account
+    /// </summary>
+    /// <returns>Byte Array</returns>
+    public byte[] GetPrivateKey()
+    {
+        if (_AMAccount != null)
+        {
+            return _AMAccount.KeyPair.ClearTextPrivateKey;
+        }
+        else
+        {
+            Debug.LogError("Account not generated yet!");
+            throw new InvalidOperationException("Account not generated yet!");
+        }
+    }
+
+    /// <summary>
+    /// Return Public Key of Algorand Account
+    /// </summary>
+    /// <returns>Byte Array</returns>
+    public byte[] GetPublicKey()
+    {
+        if (_AMAccount != null)
+        {
+            return _AMAccount.KeyPair.ClearTextPublicKey;
+        }
+        else
+        {
+            Debug.LogError("Account not generated yet!");
+            throw new InvalidOperationException("Account not generated yet!");
+        }
+    }
+
+    /// <summary>
+    /// Get Actual Mnemonic Passphrase initialized in AlgorandManager
+    /// </summary>
+    /// <returns>Algorand Account Mnemonic Passphrase</returns>
+	public string GetMnemonicPassphrase()
+    {
+        if (_AMAccount != null)
+        {
+            return _AMAccount.ToMnemonic().ToString();
+        }
+        else
+        {
+            Debug.LogError("Account not generated yet!");
+            throw new InvalidOperationException("Account not generated yet!");
+        }
+    }
+
+    /// <summary>
+    /// Verify if Algorand Address is well formated
+    /// </summary>
+    /// <param name="AddressPassed"></param>
+    /// <returns>Simple Boolean: True or False</returns>
+    public bool AddressIsValid(string AddressPassed)
+    {
+        if (Address.IsValid(AddressPassed))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
