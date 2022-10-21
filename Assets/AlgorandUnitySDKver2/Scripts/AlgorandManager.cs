@@ -22,9 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityCipher;
 
 //ALGORAND
 using Algorand;
@@ -117,4 +119,48 @@ public class AlgorandManager : Singleton<AlgorandManager>
         return _Account.ToMnemonic().ToString();
     }
 
+    /// <summary>
+    /// Load Algorand Account from Mnemonic Passphrase
+    /// </summary>
+    /// <param name="Passphrase"></param>
+    /// <returns>Algorand Account Address</returns>
+    public string LoadAccountFromPassphrase(string Passphrase)
+    {
+        if (_AMAccount == null)
+        {
+            _AMAccount = new Account(Passphrase);
+            return _AMAccount.Address.ToString();
+        }
+        else
+        {
+            return _AMAccount.Address.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Generate a new Algorand Account, save crypted in PlayerPrefs and in AlgorandManager instance
+    /// </summary>
+    /// <returns>Algorand Account Address generated</returns>
+    public string GenerateAccountAndSave()
+    {
+        if (_AMAccount == null)
+        {
+            _AMAccount = new Account();
+            //Save encrypted Mnemonic Algorand Account in PlayPrefs
+            if (!PlayerPrefs.HasKey("AlgorandAccountSDK"))
+            {
+                PlayerPrefs.SetString("AlgorandAccountSDK", RijndaelEncryption.Encrypt(_AMAccount.ToMnemonic().ToString(), SystemInfo.deviceUniqueIdentifier + _InternalPassword));
+                return _AMAccount.Address.ToString();
+            }
+            else
+            {
+                Debug.LogError("There is already an account saved in PlayerPrefs!");
+                throw new InvalidOperationException("There is already an account saved in PlayerPrefs!");
+            }
+        }
+        else
+        {
+            return _AMAccount.Address.ToString();
+        }
+    }
 }
