@@ -185,6 +185,34 @@ public class AlgorandManager : Singleton<AlgorandManager>
     }
 
     /// <summary>
+    /// Save Algorand Account in encrypted PlayPrefs
+    /// </summary>
+    /// <param name="Passphrase">Mnemonic Algorand Account</param>
+    /// <returns>True if saved</returns>
+    public Boolean SaveAccountInPlayerPrefs(string Passphrase)
+    {
+        if (!String.IsNullOrEmpty(Passphrase))
+        {
+            //Save encrypted Mnemonic Algorand Account in PlayPrefs
+            if (!PlayerPrefs.HasKey("AlgorandAccountSDK"))
+            {
+                PlayerPrefs.SetString("AlgorandAccountSDK", RijndaelEncryption.Encrypt(Passphrase, SystemInfo.deviceUniqueIdentifier + _InternalPassword));
+                return true;
+            }
+            else
+            {
+                Debug.LogError("There is already an account saved in PlayerPrefs!");
+                throw new InvalidOperationException("There is already an account saved in PlayerPrefs!");
+            }
+        }
+        else
+        {
+            Debug.LogError("Passphrase passed is Null or empty!");
+            throw new InvalidOperationException("Passphrase passed is Null or empty!");
+        }
+    }
+
+    /// <summary>
     /// Delete actual Algorand Account from PlayerPrefs
     /// WARNING: this method will irrevocably delete your account from PlayerPrefs!
     /// </summary>
