@@ -19,6 +19,7 @@
 - https://github.com/Cysharp/UniTask (MIT)
 - https://github.com/TakuKobayashi/UnityCipher (MIT)
 - https://github.com/david-frederick-batt/AlgorandUnityTransactionDemo
+- https://github.com/WalletConnect/WalletConnectUnity (MIT)
 
 In the project we use [Purestake](https://www.purestake.com/networks/algorand/) Algorand Public Node in TESTNET. It is more convenient for a possible final application in Unity to use a remote system such as Purestake by creating the various Algorand transactions locally via the .NET SDK.
  
